@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シフト表自動生成システム</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗓️ シフト表自動生成システム</h1>
+            <p>必要な項目を入力して、効率的なシフト表を自動生成しましょう</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="mode-selector section">
+                <div class="form-group">
+                    <label>入力モードを選択</label>
+                    <div class="radio-group">
+                        <input type="radio" id="mode-a" name="input-mode" value="a" checked>
+                        <label for="mode-a">Aモード (通常入力)</label>
+                        <input type="radio" id="mode-b" name="input-mode" value="b">
+                        <label for="mode-b">Bモード (一括入力)</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="mode-a-job-section">
+                <div class="section">
+                    <div class="section-title"><h2>🔧 業務設定 (Aモード)</h2></div>
+                    <div id="job-list"></div>
+                    <button class="add-btn" id="add-job-btn">➕ 業務を追加</button>
+                </div>
+            </div>
+            <div id="mode-b-job-section" style="display: none;">
+                <div class="section">
+                    <div class="section-title"><h2>🔧 業務設定 (Bモード)</h2></div>
+                    <div class="form-group">
+                        <label>業務名・詳細（カンマか読点で区切って一括入力）</label>
+                        <textarea id="bulk-jobs" rows="4" placeholder="例: 皿洗い(group:キッチン, people:2), 調理(group:キッチン, interval:1), レジ"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="mode-a-employee-section">
+                <div class="section">
+                    <div class="section-title"><h2>👥 従業員設定 (Aモード)</h2></div>
+                    <div id="employee-list"></div>
+                    <button class="add-btn" id="add-employee-btn">➕ 従業員を追加</button>
+                </div>
+            </div>
+            <div id="mode-b-employee-section" style="display: none;">
+                <div class="section">
+                     <div class="section-title"><h2>👥 従業員設定 (Bモード)</h2></div>
+                    <div class="form-group">
+                        <label>氏名・休暇希望日（カンマか読点で区切って一括入力）</label>
+                        <textarea id="bulk-employees" rows="3" placeholder="例: 池田(01-02, 01-15), 佐藤, 鈴木(02-10)"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title"><h2>📅 シフト期間設定</h2></div>
+                <div class="date-range">
+                    <div class="form-group" style="margin-bottom: 0;"><label>開始日</label><input type="date" id="start-date"></div>
+                    <div style="margin-top: 25px;">〜</div>
+                    <div class="form-group" style="margin-bottom: 0;"><label>終了日</label><input type="date" id="end-date"></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title"><h2>🏢 休業日設定</h2></div>
+                <div class="form-group">
+                    <label>会社休業日（MM-DD形式、カンマ区切りで入力）</label>
+                    <input type="text" id="holidays" placeholder="例: 01-01, 12-31">
+                </div>
+            </div>
+
+            <div class="actions" style="margin-top: 0; margin-bottom: 20px;">
+                <button id="toggle-detailed-settings-btn" class="secondary-btn">詳細設定を開く ▼</button>
+            </div>
+
+            <div id="detailed-settings" style="display: none;">
+                <div class="section">
+                    <div class="section-title">
+                        <h2>📂 グループ設定</h2>
+                        <button class="help-btn" data-help="group">?</button>
+                    </div>
+                    <div id="group-list"></div>
+                    <button class="add-btn" id="add-group-btn">➕ グループを追加</button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title"><h2>📝 メモ帳</h2></div>
+                <textarea id="notepad" rows="5" placeholder="このメモは自動でブラウザに保存されます..."></textarea>
+            </div>
+            
+            <div class="actions">
+                <button class="save-btn" id="save-settings-btn">💾 現在の設定を保存</button>
+                <button class="generate-btn" id="generate-btn">🚀 シフト表を生成</button>
+                <button class="export-btn" id="export-btn" style="display: none;">📊 Excelに出力</button>
+                <button class="copy-btn" id="copy-btn" style="display: none;">📋 Sシート用にコピー</button>
+                <button class="print-btn" id="print-btn" style="display: none;">🖨️ 印刷する</button>
+            </div>
+            
+            <div id="shift-result" style="display: none;">
+                <div class="section"><div id="shift-table-container"></div></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="help-close">&times;</span>
+            <h2 id="help-title"></h2>
+            <div id="help-content"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
